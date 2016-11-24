@@ -11,6 +11,11 @@ import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrMatcher;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.NoFilepatternException;
+import org.eclipse.jgit.internal.storage.file.FileRepository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 /**
  * 
@@ -55,8 +60,13 @@ public class ConfigManager {
 	
 	public void saveConfig(String env, String configId, InputStream inputStream) {
 		try {
-			FileUtils.copyInputStreamToFile(inputStream, new File(vaultPath, env + "/" + configId));
-		} 
+			File envVaultPath = new File(vaultPath, env);
+			File file = new File(envVaultPath, configId);
+			
+			FileUtils.copyInputStreamToFile(inputStream, file);
+			
+			createRevision(envVaultPath, file);
+		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -64,9 +74,27 @@ public class ConfigManager {
 	
 	public void saveConfig(String env, String configId, String fileContent) {
 		try {
-			FileUtils.write(new File(vaultPath, env + "/" + configId), fileContent, Charset.forName("UTF-8"));
-		} 
+			File envVaultPath = new File(vaultPath, env);
+			File file = new File(envVaultPath, configId);
+			
+			FileUtils.write(file, fileContent, Charset.forName("UTF-8"));
+			
+			createRevision(envVaultPath, file);
+		}
 		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void createRevision(File envVaultPath, File file) throws IOException {
+		try (Git git = Git.open(envVaultPath)) {
+			git.add().addFilepattern(file.getName()).call();
+			git.commit().setMessage("New version of " + file.getName()).call();
+		}
+		catch (NoFilepatternException e) {
+			throw new RuntimeException(e);
+		}
+		catch (GitAPIException e) {
 			throw new RuntimeException(e);
 		}
 	}
