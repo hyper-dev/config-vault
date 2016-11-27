@@ -4,9 +4,6 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.text.StrLookup;
 
-/**
- * @author richard_pula
- */
 public class EnvLookup extends StrLookup<String> {
 
 	private Properties envProperties;

@@ -8,20 +8,16 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
+import javax.inject.Named;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrMatcher;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoFilepatternException;
-import org.eclipse.jgit.internal.storage.file.FileRepository;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
-/**
- * 
- * @author Richard Pula
- *
- */
+@Named
 public class ConfigManager {
 
 	private File vaultPath;
