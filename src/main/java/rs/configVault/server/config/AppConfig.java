@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import rs.configVault.server.manager.ConfigManager;
+import rs.configVault.server.manager.VaultManager;
 
 @SpringBootApplication(scanBasePackages = "rs.configVault")
 public class AppConfig {
@@ -20,8 +20,8 @@ public class AppConfig {
 	}
 
 	@Bean
-	public ConfigManager configManager() {
-		return new ConfigManager(new File(vaultPath));
+	public VaultManager vaultManager() {
+		return new VaultManager(new File(vaultPath));
 	}
 
 }

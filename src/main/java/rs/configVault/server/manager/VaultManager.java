@@ -13,17 +13,16 @@ import javax.inject.Named;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrMatcher;
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.NoFilepatternException;
 
 @Named
-public class ConfigManager {
+public class VaultManager {
 
 	private File vaultPath;
+	private VaultHistory vaultHistory;
 
-	public ConfigManager(File vaultPath) {
+	public VaultManager(File vaultPath) {
 		this.vaultPath = vaultPath;
+		this.vaultHistory = new VaultHistory();
 	}
 
 	public String[] getEnvs() {
@@ -61,7 +60,7 @@ public class ConfigManager {
 			
 			FileUtils.copyInputStreamToFile(inputStream, file);
 			
-			createRevision(envVaultPath, file);
+			vaultHistory.createRevision(envVaultPath, file);
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
@@ -75,22 +74,9 @@ public class ConfigManager {
 			
 			FileUtils.write(file, fileContent, Charset.forName("UTF-8"));
 			
-			createRevision(envVaultPath, file);
+			vaultHistory.createRevision(envVaultPath, file);
 		}
 		catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private void createRevision(File envVaultPath, File file) throws IOException {
-		try (Git git = Git.open(envVaultPath)) {
-			git.add().addFilepattern(file.getName()).call();
-			git.commit().setMessage("New version of " + file.getName()).call();
-		}
-		catch (NoFilepatternException e) {
-			throw new RuntimeException(e);
-		}
-		catch (GitAPIException e) {
 			throw new RuntimeException(e);
 		}
 	}

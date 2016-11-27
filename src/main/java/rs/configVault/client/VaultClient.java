@@ -10,12 +10,16 @@ import java.net.URL;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ConfigManagerClient {
+public class VaultClient {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(VaultClient.class);
 
 	private String configVaultUrl;
 
-	public ConfigManagerClient(String configVaultUrl) {
+	public VaultClient(String configVaultUrl) {
 		this.configVaultUrl = configVaultUrl;
 	}
 
@@ -31,7 +35,7 @@ public class ConfigManagerClient {
 			}
 
 			InputStream inputStream = copyInputStream(conn.getInputStream());
-
+			
 			conn.disconnect();
 
 			return inputStream;
@@ -43,7 +47,22 @@ public class ConfigManagerClient {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public String getConfigAsString(String env, String configId) {
+		try {
+			InputStream inputStream = getConfigAsInputstream(env, configId);
 
+			String configAsString = IOUtils.toString(inputStream, Charset.forName("UTF-8"));
+
+			inputStream.close();
+
+			return configAsString;
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	private ByteArrayInputStream copyInputStream(InputStream inputStream) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -58,21 +77,6 @@ public class ConfigManagerClient {
 		baos.flush();
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(baos.toByteArray());
 		return byteArrayInputStream;
-	}
-
-	public String getConfigAsString(String env, String configId) {
-		try {
-			InputStream inputStream = getConfigAsInputstream(env, configId);
-
-			String configAsString = IOUtils.toString(inputStream, Charset.forName("UTF-8"));
-
-			inputStream.close();
-
-			return configAsString;
-		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 }

@@ -6,11 +6,11 @@ import java.io.File;
 
 import org.junit.Test;
 
-public class ConfigManagerTest {
+public class VaultManagerTest {
 
 	@Test
 	public void getConfigProperties() {
-		String configProperties = new ConfigManager(new File("src/test/vault")).getConfig("dev", "hyper.properties");
+		String configProperties = new VaultManager(new File("src/test/vault")).getConfig("dev", "hyper.properties");
 		
 		assertEquals("c=127.0.0.1", configProperties);
 	}

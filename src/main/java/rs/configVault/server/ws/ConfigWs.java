@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import rs.configVault.server.manager.ConfigManager;
+import rs.configVault.server.manager.VaultManager;
 
 @RestController
 @RequestMapping("envs")
 public class ConfigWs {
 
 	@Inject
-	private ConfigManager configManager;
+	private VaultManager configManager;
 
 	@GetMapping("")
 	public String[] getEnvs() {

@@ -1,4 +1,4 @@
-package rs.configVault.manager;
+package rs.configVault.server.manager;
 
 import static org.junit.Assert.assertEquals;
 
